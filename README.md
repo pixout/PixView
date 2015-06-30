@@ -4,7 +4,7 @@ At the moment viewer supports only MADRIX fixtures (.mpx) after it will be conve
 
 ## Build instructions
 
-Clone repository in you home or any other location
+Clone repository in you home or any other location and build it, see example following:
 
 ```
 mkdir pixview/master
@@ -13,10 +13,12 @@ git clone git@github.com:pixout/PixView.git .
 
 mkdir -p pixview/build
 cd pixview/build
-cmake -DCMAKE_BUILD_TYPE=Debug ../master
+cmake -DCMAKE_BUILD_TYPE=Release ../master
 ```
 
 ## Run instructions
 
 Start PixView with demo fixture ( 102 x 102 RGB pixels ) 60 ArtNet universes
-`pixview 6454 pxm/demo.pxm horizontal`
+```
+pixview 6454 pxm/demo.pxm horizontal
+```
