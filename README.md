@@ -5,13 +5,16 @@ At the moment viewer supports only MADRIX fixtures (.mpx) after it will be conve
 ## Build instructions
 
 Clone repository in you home or any other location
-`mkdir pixview/master`
-`cd pixview/master`
-`git clone git@github.com:pixout/PixView.git .`
 
-`mkdir -p pixview/build`
-`cd pixview/build`
-`cmake -DCMAKE_BUILD_TYPE=Debug ../master`
+```
+mkdir pixview/master
+cd pixview/master
+git clone git@github.com:pixout/PixView.git .
+
+mkdir -p pixview/build
+cd pixview/build
+cmake -DCMAKE_BUILD_TYPE=Debug ../master
+```
 
 ## Run instructions
 
