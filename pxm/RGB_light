@@ -1,0 +1,9 @@
+{
+            "name": "RGB Light",
+            "height": 1,
+            "width": 1,
+            "part" : [
+		"red",
+		"green",
+		"blue"
+]}
