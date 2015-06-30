@@ -1,1 +1,1 @@
-# TinyArtNetLib
+# Pixout ArtNet Viewer
