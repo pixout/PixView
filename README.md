@@ -29,5 +29,5 @@ Start PixView with demo fixture ( 102 x 102 RGB pixels ) 60 ArtNet universes
 pixview 6454 pxm/demo.pxm horizontal
 ```
 
-*Viewer listens ArtNet unicast/broadcast packets on specified UDP port*
-*Without ArtNet flow viewer will display black screen, you need to provide ArtNet flow to see something*
+*Viewer listens ArtNet unicast/broadcast packets on specified UDP port.
+Without ArtNet flow viewer will display black screen, you need to provide ArtNet flow to see something*
