@@ -3,6 +3,8 @@ This viewer used in [Pixout ArtNet Recorder](http://www.pixoutserver.com) projec
 for our internal testing and we think this project could be interesting for others too.
 It could be usefull when you need to see how your lighting effects looks without LED screen ( on regular PC ) or preview lighting show on dedicated PC at the same time.
 
+![Pixout ArtNet Viewer demo](http://pixoutserver.com/data/img/rocket.png)
+
 This viewer emulate lighting device and displays ArtNet flow without universe limitation for specified Fixture on the PC screen.
 At the moment viewer supports only MADRIX fixtures (.mpx) after it will be converted to (.pxm) format
 
