@@ -45,6 +45,17 @@ SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x ${Qt5Core_EXECUTABLE_COMPILE
 QT5_WRAP_CPP( SOURCES2 ${MOC_HEADER})
 ADD_EXECUTABLE( mpx2pxm ${SOURCES} ${SOURCES2})
 
+IF (WIN32)
+
+TARGET_LINK_LIBRARIES( mpx2pxm
+  -Wl,--start-group
+  ${Qt5Core_LIBRARIES}
+  ${Qt5Xml_LIBRARIES}
+  pthread
+  -Wl,--end-group
+  -Wl,-Bstatic stdc++)
+ELSE()
+
 TARGET_LINK_LIBRARIES( mpx2pxm
   -Wl,--start-group
   -L${CMAKE_FIND_ROOT_PATH}/opt/vc/lib
@@ -54,3 +65,4 @@ TARGET_LINK_LIBRARIES( mpx2pxm
   pthread
   c
   -Wl,--end-group )
+ENDIF()

@@ -17,18 +17,24 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA 
 */
 #include "Logger.hpp"
+#ifdef __linux__
 #include <syslog.h>
+#endif
 
 Logger::Logger()
     : output_( Logger::Console ), level_( 3 ), use_context_( true )
 {
     qInstallMessageHandler( MessageHandler );
+#ifdef __linux__
     openlog( "pixout", 0, LOG_LOCAL0 );
+#endif
 }
 
 Logger::~Logger()
 {
+#ifdef __linux__
     closelog( );
+#endif
 }
 
 void Logger::MessageHandler( QtMsgType type, const QMessageLogContext &context, const QString &message )
@@ -71,6 +77,7 @@ void Logger::writeToConsole( int, const char *s )
 
 void Logger::writeToSyslog( int level, const char *s )
 {
+#ifdef __linux__
     int priority = LOG_INFO;
     switch( level )
     {
@@ -80,6 +87,7 @@ void Logger::writeToSyslog( int level, const char *s )
     }
 
     syslog( priority, s );
+#endif
 }
 
 
