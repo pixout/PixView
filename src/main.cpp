@@ -57,7 +57,7 @@ int main( int argc, char* argv[] )
     qmlRegisterType<PainterOutput>("Painter", 1, 0, "PainterItem");
     QQuickView view;
     view.setResizeMode( QQuickView::SizeRootObjectToView );
-    view.setSource( QUrl::fromLocalFile( "qml/main.qml" ) );
+    view.setSource( QUrl(QStringLiteral("qrc:/main.qml")) );
     PainterOutput *output( view.rootObject()->findChild<PainterOutput*>( "painter" ) );
     Painter painter( output );
     PixelMapper mapper;

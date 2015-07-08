@@ -8,7 +8,7 @@ It could be usefull when you need to see how your lighting effects looks without
 This viewer emulate lighting device and displays ArtNet flow without universe limitation for specified Fixture on the PC screen.
 At the moment viewer supports only MADRIX fixtures (.mpx) after it will be converted to (.pxm) format
 
-*At the moment software builded only for Linux but we are working on Windows version*
+*This project could be build on Linux and Windows but we doesn't try to build it on Apple*
 
 ## Build instructions
 

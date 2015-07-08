@@ -1,6 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.8)
 
-OPTION( WITHOUT_TOOLS "Not compile tools" OFF )
+OPTION( WITHOUT_TOOLS "Do not compile tools" OFF )
 
 SET( PACKAGE pixview)
 SET( PACKAGE_VERSION 0.0.2 )
@@ -40,13 +40,18 @@ INCLUDE_DIRECTORIES(
 ADD_SUBDIRECTORY( Common )
 ADD_SUBDIRECTORY( src )
 
+# Resources
+SET( RCS
+   ${CMAKE_CURRENT_SOURCE_DIR}/resources/app.qrc
+)
+
 # Viewer sources
 SET( SOURCES
    ${COMMON_SOURCES}
    src/main.cpp
 )
 
-# QT5_ADD_RESOURCES( SOURCES ${RCS} )
+QT5_ADD_RESOURCES( SOURCES ${RCS} )
 ADD_EXECUTABLE( pixview ${SOURCES} )
 ADD_DEPENDENCIES(pixview data)
 
