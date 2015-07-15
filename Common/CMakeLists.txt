@@ -1,5 +1,3 @@
-SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC" )
-
 # Plugin sources
 SET( SOURCES
   Fixture.cpp

@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA 
 */
-
 #include "Painter.hpp"
 #include "Receiver.hpp"
 #include "Common/PainterOutput.hpp"
@@ -26,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 #include <QApplication>
 #include <QQuickView>
 #include <QHostAddress>
+#include <QQmlApplicationEngine>
 
 void usage()
 {
@@ -53,12 +53,15 @@ int main( int argc, char* argv[] )
     const char* pm_file = argv[2];
 
     QApplication app(argc, argv);
+    QQmlApplicationEngine engine;
 
     qmlRegisterType<PainterOutput>("Painter", 1, 0, "PainterItem");
-    QQuickView view;
-    view.setResizeMode( QQuickView::SizeRootObjectToView );
-    view.setSource( QUrl(QStringLiteral("qrc:/main.qml")) );
-    PainterOutput *output( view.rootObject()->findChild<PainterOutput*>( "painter" ) );
+    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+
+    QObject *rootObject = engine.rootObjects().first();
+    Q_ASSERT( rootObject );
+
+    PainterOutput *output( rootObject->findChild<PainterOutput*>( "painter" ) );
     Painter painter( output );
     PixelMapper mapper;
     painter.SetPixelMapper( &mapper );
@@ -71,22 +74,20 @@ int main( int argc, char* argv[] )
 
     if ( argc > 3 )
     {
-	if ( !strcmp(argv[3], "horizontal") )
-	{
-	    painter.SetOrientation(Painter::Horizontal);
-	}
-	else if ( !strcmp(argv[3], "vertical") )
-	{
-	    painter.SetOrientation(Painter::Vertical);
-	}
+        if ( !strcmp(argv[3], "horizontal") )
+        {
+            painter.SetOrientation(Painter::Horizontal);
+        }
+        else if ( !strcmp(argv[3], "vertical") )
+        {
+            painter.SetOrientation(Painter::Vertical);
+        }
     }
 	
     mapper.Load( pm_file );
 
     qDebug("Listening on port %u with pixel-mapping file %s and orientation %s",
 	   port, pm_file, painter.Orientation() == Painter::Vertical ? "vertical" : "horizontal" );
-
-    view.show();
 
     return app.exec();
 }

@@ -28,8 +28,6 @@ Receiver::Receiver( int port )
 
 void Receiver::ReadData()
 {
-    static int i = 0;
-
     while (socket_.hasPendingDatagrams())
     {
         QByteArray datagram;
@@ -55,13 +53,13 @@ void Receiver::ProcessData(const QByteArray &datagram)
     if( prev_sequence == -1 || ( prev_sequence+1 == sequence || ( prev_sequence == 255 && sequence == 0 ) ) )
         ;
     else
-        LOG( 0, "*************** FRAME OUT OF ORDER ( %d >> %d ) ****************", prev_sequence, sequence );
+        LOG( 5, "*************** FRAME OUT OF ORDER ( %d >> %d ) ****************", prev_sequence, sequence );
         
     prev_sequence = sequence;
     QByteArray data(datagram.data() + 18, size);
 
     if( sequence == 0 )
-        LOG( 3, "universe = %d channels = %d sequence = %d", universe, size, sequence );
+        LOG( 5, "universe = %d channels = %d sequence = %d", universe, size, sequence );
 
     emit Received( universe, data );
 }

@@ -18,6 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 */
 #include "Util.hpp"
 
+#if 0
 static void DumpHelper( const QByteArray &data, unsigned i, unsigned COLUMNS )
 {
     printf( " " );
@@ -52,3 +53,4 @@ void Dump( const QByteArray &data)
 	DumpHelper( data, i-1, COLUMNS );
     }
 }
+#endif

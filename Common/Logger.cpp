@@ -87,6 +87,9 @@ void Logger::writeToSyslog( int level, const char *s )
     }
 
     syslog( priority, s );
+#else
+    (void)level;
+    (void)s;
 #endif
 }
 

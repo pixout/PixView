@@ -1,7 +1,7 @@
 # Pixout ArtNet Viewer
 This viewer used in [Pixout ArtNet Recorder](http://www.pixoutserver.com) project,
 for our internal testing and we think this project could be interesting for others too.
-It could be usefull when you need to see how your lighting effects looks without LED screen ( on regular PC ) or preview lighting show on dedicated PC at the same time.
+It could be usefull when you need to see how your lighting effects looks without LED screen ( on regular PC ) or preview lighting show on dedicated PC at the show time.
 
 ![Pixout ArtNet Viewer demo](http://pixoutserver.com/data/img/rocket.png)
 
