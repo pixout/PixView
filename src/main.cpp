@@ -54,6 +54,7 @@ int main( int argc, char* argv[] )
 
     QApplication app(argc, argv);
     QQmlApplicationEngine engine;
+    engine.addImportPath( QStringLiteral("qrc:/"));
 
     qmlRegisterType<PainterOutput>("Painter", 1, 0, "PainterItem");
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));

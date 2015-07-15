@@ -67,6 +67,7 @@ SET( RCS
 
 # Viewer sources
 SET( SOURCES
+   ${QML_SRC}
    ${COMMON_SOURCES}
    src/main.cpp
 )

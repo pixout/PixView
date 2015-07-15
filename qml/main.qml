@@ -30,65 +30,48 @@ ApplicationWindow {
         id: painter
         objectName: "painter"
         anchors.centerIn: parent
-        anchors { fill: parent; bottomMargin: 150 }
+        anchors { fill: parent; bottomMargin: 200 }
     }
 
     Rectangle {
+        id: playbar
+        height: 50
+        color: "#373737"
+        anchors { top: painter.bottom; left: parent.left; right: parent.right; }
+
+        ColumnLayout {
+            anchors { fill: parent; }
+        Text {
+            text: "Universes: 1";
+            color: "lightgray";
+            font.pointSize: 10;
+            font.underline: false;
+            Layout.alignment: Qt.AlignRight;
+        }
+
+        RowLayout {
+            anchors { bottomMargin: 5 }
+
+            Button {
+                text: qsTr("Stop")
+            }
+            Button {
+                text: qsTr("Start")
+            }
+            Button {
+                text: qsTr("Fullscreen")
+            }
+        }
+
+        }
+    }
+
+    BoxSettings {
         id: nodeActions
         border.width: 1
         border.color: "#9d9d9d"
-        height: 150
-        anchors { top: painter.bottom; left: parent.left; right: parent.right; bottom: parent.bottom }
+        anchors { top: playbar.bottom; left: parent.left; right: parent.right; bottom: parent.bottom }
         color: "gray"
-
-        GroupBox {
-        title: "Settings"
-        anchors { fill:parent; topMargin: 5 }
-
-        GridLayout {
-            anchors { fill:parent; topMargin: 5 }
-            columns: 2
-
-            Text {
-                text: "Port";
-                color: "white";
-                Layout.alignment: Qt.AlignCenter;
-            }
-
-            TextField {
-                placeholderText: qsTr("6454")
-            }
-
-            Text {
-                text: "Position";
-                color: "white";
-                Layout.alignment: Qt.AlignCenter;
-            }
-
-            TextField {
-                placeholderText: qsTr("vertical")
-            }
-
-            Text {
-                text: "Fixture Path";
-                color: "white";
-                Layout.alignment: Qt.AlignCenter;
-            }
-
-            RowLayout {
-                TextField {
-                    placeholderText: qsTr("C:\\aa.pxm")
-                    Layout.fillWidth: true
-                }
-                Button {
-                    text: "Browse"
-                }
-            }
-
-
-        } // grid.layout
-
-        }
     }
 }
 
