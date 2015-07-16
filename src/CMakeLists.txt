@@ -3,12 +3,14 @@
 SET( SOURCES
   Receiver.cpp
   Painter.cpp
+  AppSettings.cpp
 )
 
 # Plugin headers used Qt
 SET( MOC_HEADERS
   Receiver.hpp
   Painter.hpp
+  AppSettings.hpp
 )
 
 QT5_WRAP_CPP( SOURCES ${MOC_HEADERS})

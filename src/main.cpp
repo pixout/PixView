@@ -18,6 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 */
 #include "Painter.hpp"
 #include "Receiver.hpp"
+#include "AppSettings.hpp"
 #include "Common/PainterOutput.hpp"
 #include "Common/PixelMapper.hpp"
 #include "Common/Logger.hpp"
@@ -26,6 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 #include <QQuickView>
 #include <QHostAddress>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 
 void usage()
 {
@@ -52,11 +54,13 @@ int main( int argc, char* argv[] )
     int port = atoi( argv[1] );
     const char* pm_file = argv[2];
 
+    AppSettings settings;
     QApplication app(argc, argv);
     QQmlApplicationEngine engine;
     engine.addImportPath( QStringLiteral("qrc:/"));
 
     qmlRegisterType<PainterOutput>("Painter", 1, 0, "PainterItem");
+    engine.rootContext()->setContextProperty("settings", &settings);
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     QObject *rootObject = engine.rootObjects().first();
@@ -89,6 +93,10 @@ int main( int argc, char* argv[] )
 
     qDebug("Listening on port %u with pixel-mapping file %s and orientation %s",
 	   port, pm_file, painter.Orientation() == Painter::Vertical ? "vertical" : "horizontal" );
+
+    QQuickWindow *window = qobject_cast<QQuickWindow *>(rootObject);
+    Q_ASSERT( window );
+    window->show();
 
     return app.exec();
 }

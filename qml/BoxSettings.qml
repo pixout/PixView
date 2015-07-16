@@ -19,7 +19,7 @@ import QtQuick.Layouts 1.1
             }
 
             TextField {
-                placeholderText: qsTr("6454")
+                placeholderText: settings.port.toString()
             }
 
             Text {
@@ -29,7 +29,7 @@ import QtQuick.Layouts 1.1
             }
 
             TextField {
-                placeholderText: qsTr("vertical")
+                placeholderText: settings.position === settings.Vertical ? qsTr("vertical") : qsTr("horizontal")
             }
 
             Text {
@@ -40,7 +40,7 @@ import QtQuick.Layouts 1.1
 
             RowLayout {
                 TextField {
-                    placeholderText: qsTr("C:\\aa.pxm")
+                    placeholderText: settings.fixturePath
                     Layout.fillWidth: true
                 }
                 Button {
@@ -52,4 +52,5 @@ import QtQuick.Layouts 1.1
         } // grid.layout
 
         }
+        Component.onCompleted: console.log("path "+settings.fixturePath )
     }

@@ -7,7 +7,6 @@ ApplicationWindow {
     id: col1
     width: 600
     height: 600
-    visible: true
     color: "black"
     title: "PixView, Art-Net preview"
 
