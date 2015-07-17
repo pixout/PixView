@@ -15,6 +15,8 @@ public:
     explicit AppSettings(QObject *parent = 0);
     ~AppSettings();
 
+     bool Load( const QString &path );
+     bool Save();
      enum Position { Vertical, Horizontal };
 
 signals:
@@ -25,7 +27,13 @@ signals:
 private:
       int port_;
       QString fixture_path_;
+
+      union {
       Position position_;
+      int position_int_;
+      };
+
+      QString settings_path_;
 
 };
 

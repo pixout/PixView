@@ -32,7 +32,7 @@ Fixture::Fixture( const QString &path )
 
 void Fixture::Load( const QString &path )
 {
-    LOG( 2, "Loading fixture from file '%s'", qPrintable( path ) );
+    LOG( 3, "Loading fixture from file '%s'", qPrintable( path ) );
 
     QJsonDocument json;
     QFile file( path );

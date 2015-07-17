@@ -28,6 +28,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 #include <QHostAddress>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QStandardPaths>
+#include <QDir>
 
 void usage()
 {
@@ -51,10 +53,18 @@ int main( int argc, char* argv[] )
     LOGGER.setOutput( Logger::Console );
     LOG( 1, "viewer Version: %s ", VERSION );
 
+    const QString settings_path = QDir::fromNativeSeparators(
+                QStandardPaths::writableLocation( QStandardPaths::AppLocalDataLocation )+ QDir::separator()+"PixView" + QDir::separator()
+                );
+
+    // create settings location if not exists
+    QDir ().mkdir( settings_path );
+
     int port = atoi( argv[1] );
     const char* pm_file = argv[2];
 
     AppSettings settings;
+    settings.Load( settings_path + "app.data");
     QApplication app(argc, argv);
     QQmlApplicationEngine engine;
     engine.addImportPath( QStringLiteral("qrc:/"));
@@ -98,5 +108,7 @@ int main( int argc, char* argv[] )
     Q_ASSERT( window );
     window->show();
 
-    return app.exec();
+    const int res = app.exec();
+    settings.Save();
+    return res;
 }
