@@ -28,9 +28,15 @@ import QtQuick.Layouts 1.1
                 Layout.alignment: Qt.AlignCenter;
             }
 
-            TextField {
-                placeholderText: settings.position === settings.Vertical ? qsTr("vertical") : qsTr("horizontal")
+            ComboBox {
+                //width: 200
+                currentIndex: settings.position === settings.Vertical ? 0 : 1
+                model: [ "Vertical", "Horizontal" ]
             }
+
+//            TextField {
+//                placeholderText: settings.position === settings.Vertical ? qsTr("vertical") : qsTr("horizontal")
+//            }
 
             Text {
                 text: "Fixture Path";
@@ -45,6 +51,13 @@ import QtQuick.Layouts 1.1
                 }
                 Button {
                     text: "Browse"
+
+                    onClicked: {
+                            browseDialog.title = "Browse fixtures";
+                            browseDialog.selectExisting = false;
+                            browseDialog.open()
+
+                    }
                 }
             }
 

@@ -17,6 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA 
 */
 #include "Painter.hpp"
+#include "AppSettings.hpp"
 #include "Common/Output.hpp"
 #include "Common/PixelMapper.hpp"
 #include "Common/Fixture.hpp"
@@ -25,10 +26,23 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 #include <QColor>
 #include <QDebug>
 
-Painter::Painter( Output *output )
-    : output_( output ), image_( 400, 400, QImage::Format_RGB32 ), orientation_ ( Painter::Vertical )
+Painter::Painter( Output *output, AppSettings *settings )
+    : output_( output ), image_( 400, 400, QImage::Format_RGB32 ), orientation_ ( Painter::Vertical ), settings_( settings )
 {
     QObject::connect( this, &Painter::OnOrientation, this, &Painter::Resize );
+
+    switch( settings->position() )
+    {
+        case AppSettings::Horizontal:
+            SetOrientation(Painter::Horizontal);
+            break;
+
+        case AppSettings::Vertical:
+            SetOrientation(Painter::Vertical);
+            break;
+    }
+
+    //todo: connect to settings and control its changing
 }
 
 void Painter::Draw( int universe, const QByteArray &data )

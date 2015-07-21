@@ -16,8 +16,12 @@ public:
     ~AppSettings();
 
      bool Load( const QString &path );
-     bool Save();
+     bool Save( const QString &path );
      enum Position { Vertical, Horizontal };
+
+     int port() const { return port_; }
+     const QString& fixturePath() const { return fixture_path_; }
+     Position position() const { return position_; }
 
 signals:
       void portChanged();

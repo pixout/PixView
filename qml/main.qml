@@ -21,7 +21,14 @@ ApplicationWindow {
         }
 
         Menu {
-            title: qsTr("&About")
+            title: qsTr("&Help")
+
+            MenuItem {
+                text: "About"
+                shortcut: "Ctrl+V"
+                onTriggered: about.open()
+            }
+
         }
     }
 
@@ -36,18 +43,20 @@ ApplicationWindow {
         id: playbar
         height: 50
         color: "#373737"
+        opacity: 0.3
         anchors { top: painter.bottom; left: parent.left; right: parent.right; }
 
         ColumnLayout {
             anchors { fill: parent; }
         Text {
             text: "Universes: 1";
-            color: "lightgray";
+            color: "white";
+            opacity: 1
             font.pointSize: 10;
             font.underline: false;
             Layout.alignment: Qt.AlignRight;
         }
-
+/*
         RowLayout {
             anchors { bottomMargin: 5 }
 
@@ -61,7 +70,7 @@ ApplicationWindow {
                 text: qsTr("Fullscreen")
             }
         }
-
+*/
         }
     }
 
@@ -71,6 +80,14 @@ ApplicationWindow {
         border.color: "#9d9d9d"
         anchors { top: playbar.bottom; left: parent.left; right: parent.right; bottom: parent.bottom }
         color: "gray"
+    }
+
+    BrowseDialog {
+        id: browseDialog
+    }
+
+    About {
+        id: about
     }
 }
 

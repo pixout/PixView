@@ -35,11 +35,9 @@ bool AppSettings::Load( const QString &path )
     return true;
 }
 
-bool AppSettings::Save()
+bool AppSettings::Save( const QString &path )
 {
-    if( settings_path_.isEmpty() )
-        return false;
-
+    settings_path_ = path;
     QFile file( settings_path_ );
     if( !file.open( QIODevice::WriteOnly))
     {

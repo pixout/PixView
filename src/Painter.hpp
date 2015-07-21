@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 class Output;
 class PixelMapper;
+class AppSettings;
 
 class Painter : public QObject
 {
@@ -36,7 +37,7 @@ public:
 	Horizontal
     };
 
-    Painter( Output *output );
+    Painter( Output *output, AppSettings *settings );
     void SetPixelMapper( PixelMapper *mapper) { mapper_ = mapper; }
     void SetOrientation( Orientation orientation );
     Orientation Orientation() const { return orientation_; }
@@ -50,4 +51,5 @@ private:
     QImage image_;
     PixelMapper *mapper_;
     enum Orientation orientation_;
+    AppSettings *settings_;
 };
