@@ -5,5 +5,7 @@
         <file alias="BrowseDialog.qml">../qml/BrowseDialog.qml</file>
         <file alias="favicon.png">../favicon.png</file>
         <file alias="About.qml">../qml/About.qml</file>
+        <file alias="logo.png">../logo.png</file>
     </qresource>
 </RCC>
+                                   
