@@ -21,12 +21,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 #include <QUdpSocket>
 #include <QByteArray>
 
+class AppSettings;
+
 class Receiver : public QObject
 {
     Q_OBJECT
 public:
-    Receiver( int port );
+    Receiver( AppSettings *settings );
     ~Receiver() {}
+
+public slots:
+    void Reconnect();
 
 signals:
     void Received(int universe, const QByteArray &data);
@@ -37,4 +42,5 @@ private slots:
 private:
     void ProcessData( const QByteArray &datagram );
     QUdpSocket socket_;
+    AppSettings *settings_;
 };

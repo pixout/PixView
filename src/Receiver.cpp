@@ -17,13 +17,14 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA 
 */
 #include "Receiver.hpp"
+#include "AppSettings.hpp"
 #include "Common/Fixture.hpp"
 #include "Common/Logger.hpp"
 
-Receiver::Receiver( int port )
+Receiver::Receiver( AppSettings *settings ) : settings_(settings)
 {
-    socket_.bind( QHostAddress::Any, port );
     QObject::connect( &socket_, &QUdpSocket::readyRead, this, &Receiver::ReadData );
+    Reconnect();
 }
 
 void Receiver::ReadData()
@@ -64,3 +65,9 @@ void Receiver::ProcessData(const QByteArray &datagram)
     emit Received( universe, data );
 }
 
+void Receiver::Reconnect()
+{
+    LOG( 1, "Connecting to port %d", settings_->port() );
+    socket_.close();
+    socket_.bind( QHostAddress::Any, settings_->port() );
+}

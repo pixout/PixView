@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA 
 */
+#include "AppSettings.hpp"
 #include "Common/PixelMapper.hpp"
 #include "Common/Logger.hpp"
 
@@ -24,25 +25,33 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 #include <QJsonArray>
 #include <QFile>
 #include <QDir>
+#include <QUrl>
 
-PixelMapper::PixelMapper()
-    : width_( 0 ), height_ ( 0 )
+PixelMapper::PixelMapper( AppSettings *settings )
+    : width_( 0 ), height_ ( 0 ), settings_(settings)
 {
 }
 
-void PixelMapper::Load( const QString& pxm_path )
+void PixelMapper::Reload()
 {
-    LOG( 2, "Loading pixel mapping from file '%s'", qPrintable( pxm_path ) );
+    QUrl url(settings_->fixturePath());
+    if( url.isLocalFile() )
+    {
+        LOG( 2, "Converting URL like fixture path into native path" );
+        settings_->fixturePath() = url.toLocalFile();
+    }
+
+    LOG( 2, "Loading pixel mapping from file '%s'", qPrintable( settings_->fixturePath() ) );
 
     QJsonDocument json;
-    QFile file( pxm_path );
+    QFile file( settings_->fixturePath() );
 
     file.open( QIODevice::ReadOnly | QIODevice::Text );
 
     if( !file.exists() )
     {
         //todo: exception
-        ERR( "File '%s' not found", qPrintable( pxm_path ) );
+        ERR( "File '%s' not found", qPrintable( settings_->fixturePath() ) );
 	throw;
     }
     
@@ -150,7 +159,7 @@ void PixelMapper::Load( const QString& pxm_path )
 
         if( QDir::isRelativePath(path) )
         {
-            QFileInfo fi( pxm_path );
+            QFileInfo fi( settings_->fixturePath() );
             path = fi.absolutePath()+QString( QDir::separator() )+path;
         }
 

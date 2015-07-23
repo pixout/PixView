@@ -33,9 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 void usage()
 {
-    qDebug() << "Pixout ArtNet Viewer";
-    qDebug() << "Version" << VERSION;
-    qDebug() << "Usage: ./pixview <port> <pixel-mapping file> [ < horizontol | vertical > ]";
+    qDebug() << "\nUsage: ./pixview <port> <pixel-mapping file> [ < horizontol | vertical > ]";
     qDebug() << "\tport - listen on port (default 6454)";
     qDebug() << "\tpixel-mapping file ( use mapping from file )";
     qDebug() << "\thorizontol or vertical orientation of universes (default is vertical)";
@@ -44,12 +42,14 @@ void usage()
 
 int main( int argc, char* argv[] )
 {
+    QApplication app(argc, argv);
     LOGGER.setLevel( 3 );
     LOGGER.setOutput( Logger::Console );
+    LOG( 1, "Pixout ArtNet Viewer" );
     LOG( 1, "viewer Version: %s ", VERSION );
 
     const QString settings_path = QDir::fromNativeSeparators(
-                QStandardPaths::writableLocation( QStandardPaths::AppLocalDataLocation )+ QDir::separator()+"PixView" + QDir::separator()
+                QStandardPaths::writableLocation( QStandardPaths::AppLocalDataLocation ) + QDir::separator()
                 );
 
     // create settings location if not exists
@@ -58,7 +58,10 @@ int main( int argc, char* argv[] )
 
     if( argc < 3 )
     {
-        settings.Load( settings_path + "app.data");
+        if( !settings.load( settings_path + "app.data") )
+        {
+           WARN("Can't open or empty fixture file: %s", qPrintable(settings_path + "app.data") );
+        }
     }
     else {
         settings.setProperty("port", atoi( argv[1] ));
@@ -66,12 +69,13 @@ int main( int argc, char* argv[] )
         settings.setProperty("position", argv[3]);
     }
 
-    QApplication app(argc, argv);
     QQmlApplicationEngine engine;
     app.setWindowIcon(QIcon(":favicon.png"));
     engine.addImportPath( QStringLiteral("qrc:/"));
 
     qmlRegisterType<PainterOutput>("Painter", 1, 0, "PainterItem");
+    qmlRegisterUncreatableType<AppSettings,1>("AppSettings",1,0,"AppSettings","AppSettings couldn't be created from QML");
+
     engine.rootContext()->setContextProperty("settings", &settings);
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
@@ -82,17 +86,21 @@ int main( int argc, char* argv[] )
     Q_ASSERT( output );
 
     Painter painter( output, &settings );
-    PixelMapper mapper;
+    PixelMapper mapper( &settings );
     painter.SetPixelMapper( &mapper );
-    Receiver receiver( settings.port() );
+    Receiver receiver( &settings );
 
     QObject::connect( &receiver, &Receiver::Received, &painter, &Painter::Draw );
     QObject::connect( &painter, &Painter::ReadyToOutput, output, &PainterOutput::Process );
     QObject::connect( &mapper, &PixelMapper::OnResize, &painter, &Painter::Resize );
     QObject::connect( &mapper, &PixelMapper::OnResize, output, &PainterOutput::setCellSize );
+    QObject::connect( &settings, &AppSettings::fixturePathChanged, &mapper, &PixelMapper::Reload );
+    QObject::connect( &settings, &AppSettings::portChanged, &receiver, &Receiver::Reconnect );
 
     if( !settings.fixturePath().isEmpty() )
-        mapper.Load( settings.fixturePath() );
+        mapper.Reload();
+    else
+        WARN("Pixel mapping empty, skip" );
 
     LOG(1, "Listening on port %u with pixel-mapping file %s and orientation %s",
        settings.port(), qPrintable(settings.fixturePath()), painter.Orientation() == Painter::Vertical ? "vertical" : "horizontal" );
