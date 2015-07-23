@@ -7,6 +7,10 @@ ApplicationWindow {
     id: col1
     width: 600
     height: 600
+    minimumHeight: 600      //todo: un-freeze window size
+    maximumHeight: 600
+    minimumWidth: 600
+    maximumWidth: 600
     color: "black"
     title: "PixView, Art-Net preview"
 
@@ -78,12 +82,23 @@ ApplicationWindow {
         id: nodeActions
         border.width: 1
         border.color: "#9d9d9d"
-        anchors { top: playbar.bottom; left: parent.left; right: parent.right; bottom: parent.bottom }
         color: "gray"
+        anchors { top: playbar.bottom; left: parent.left; right: parent.right; bottom: parent.bottom }
     }
 
     BrowseDialog {
         id: browseDialog
+        objectName: "browseDialog"
+
+        onAccepted: {
+            if( browseDialog.selectExisting ) {
+                settings.fixturePath = settings.stripURLFromPath(browseDialog.fileUrl)
+            }
+        }
+        onRejected: {
+            browseDialog.close()
+        }
+
     }
 
     About {

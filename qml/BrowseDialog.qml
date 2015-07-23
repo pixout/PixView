@@ -5,15 +5,6 @@ import QtQuick.Dialogs 1.2
         id: fileDialog
         visible: false
         title: "Please choose a fixture file"
+        folder: settings.appPath
         nameFilters: [ "Pixout fixtues (*.pxm)","MADRIX fixtures files (*.mpx)", "All files (*)" ]
-        onAccepted: {
-            if( fileDialog.selectExisting ) {
-                console.log(fileDialog.fileUrl)
-            } else {
-                console.log(fileDialog.fileUrl)
-            }
-        }
-        onRejected: {
-            console.log("Canceled")
-        }
     }

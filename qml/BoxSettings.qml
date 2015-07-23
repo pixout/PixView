@@ -1,10 +1,11 @@
 import QtQuick 2.4
+import AppSettings 1.0
 import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
+import QtQuick.Controls.Styles 1.1
 
-    Rectangle {
-
-        GroupBox {
+Rectangle {
+    GroupBox {
         title: "Settings"
         anchors { fill:parent; topMargin: 5 }
 
@@ -19,7 +20,12 @@ import QtQuick.Layouts 1.1
             }
 
             TextField {
-                placeholderText: settings.port.toString()
+                text: settings.port.toString()
+
+                onEditingFinished: {
+                    settings.port = text
+                    console.log(" Port updated to "+settings.port)
+                }
             }
 
             Text {
@@ -29,14 +35,19 @@ import QtQuick.Layouts 1.1
             }
 
             ComboBox {
-                //width: 200
-                currentIndex: settings.position === settings.Vertical ? 0 : 1
+                currentIndex: settings.position === AppSettings.Vertical ? 0 : 1
                 model: [ "Vertical", "Horizontal" ]
-            }
 
-//            TextField {
-//                placeholderText: settings.position === settings.Vertical ? qsTr("vertical") : qsTr("horizontal")
-//            }
+                onCurrentIndexChanged: {
+                    console.log(" Position changed to "+currentIndex)
+
+                    if( currentIndex == 0 ) {
+                        settings.position = AppSettings.Vertical;
+                    } else {
+                        settings.position = AppSettings.Horizontal;
+                    }
+                }
+            }
 
             Text {
                 text: "Fixture Path";
@@ -46,24 +57,20 @@ import QtQuick.Layouts 1.1
 
             RowLayout {
                 TextField {
-                    placeholderText: settings.fixturePath
+                    text: settings.fixturePath
                     Layout.fillWidth: true
                 }
                 Button {
                     text: "Browse"
 
                     onClicked: {
-                            browseDialog.title = "Browse fixtures";
-                            browseDialog.selectExisting = false;
-                            browseDialog.open()
+                        browseDialog.title = "Browse fixtures";
+                        browseDialog.selectExisting = true;
+                        browseDialog.open()
 
                     }
                 }
             }
-
-
         } // grid.layout
-
-        }
-        Component.onCompleted: console.log("path "+settings.fixturePath )
     }
+}
