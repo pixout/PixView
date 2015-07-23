@@ -15,12 +15,13 @@ import QtQuick.Dialogs 1.2
             RowLayout {
                 anchors { fill: parent; bottomMargin: 40; leftMargin: 5 }
 
-                Rectangle {
+                Image {
                     width: 150
                     height: 150
                     anchors.leftMargin: 5
-
-                    color: "red"
+                    source: "qrc:/logo.png"
+                    fillMode: Image.PreserveAspectFit
+                    sourceSize.width: 150
                 }
 
                 ColumnLayout{
@@ -48,15 +49,19 @@ import QtQuick.Dialogs 1.2
 
             RowLayout {
                 id: layout
-                anchors { bottom: parent.bottom; left: parent.left; right: parent.right;  }
+                anchors { bottom: parent.bottom; left: parent.left; right: parent.right; bottomMargin: 10 }
 
                 Button{
                     id: acceptButton
-                    text: "OK"
+                    text: qsTr("&Ok")
                     height: 20
+                    focus: true
                     anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.bottomMargin: 5
+
                     onClicked: {
+                        about.close()
+                    }
+                    Keys.onReturnPressed: {
                         about.close()
                     }
                 }
