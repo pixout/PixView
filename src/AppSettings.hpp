@@ -11,6 +11,7 @@ class AppSettings : public QObject
     Q_PROPERTY(QString fixturePath MEMBER fixture_path_ NOTIFY fixturePathChanged)
     Q_PROPERTY(Position position MEMBER position_ NOTIFY positionChanged)
     Q_PROPERTY(QUrl appPath MEMBER app_path_ CONSTANT)
+    Q_PROPERTY(int universes MEMBER universes_ NOTIFY universesChanged)
 
 public:
     explicit AppSettings(QObject *parent = 0);
@@ -26,6 +27,7 @@ public:
      const QString& fixturePath() const { return fixture_path_; }
      QString& fixturePath() { return fixture_path_; }
      Position position() const { return position_; }
+     int universes() const { return universes_; }
 
 //     static void declareQML();
 
@@ -34,6 +36,7 @@ signals:
       void fixturePathChanged();
       void positionChanged();
       void onLoaded();
+      void universesChanged();
 
 private:
       int port_;
@@ -46,6 +49,7 @@ private:
 
       QString settings_path_;
       QUrl app_path_;
+      int universes_;
 
 };
 

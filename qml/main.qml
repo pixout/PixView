@@ -53,7 +53,7 @@ ApplicationWindow {
         ColumnLayout {
             anchors { fill: parent; }
         Text {
-            text: "Universes: 1";
+            text: "Universes: "+settings.universes;
             color: "white";
             opacity: 1
             font.pointSize: 10;

@@ -45,6 +45,7 @@ public:
 public slots:
     void Draw( int universe, const QByteArray &data );
     void Resize( int width, int height);
+    void RePosition();
 
 private:
     Output *output_;
@@ -52,4 +53,6 @@ private:
     PixelMapper *mapper_;
     enum Orientation orientation_;
     AppSettings *settings_;
+
+    void clear();
 };

@@ -44,6 +44,9 @@ void PainterOutput::Process( const QImage &image )
 
 void PainterOutput::paint(QPainter * painter)
 {
+
+    //todo: rework this code, repeats code from: Painter::Draw()
+
     static QPixmap *doubleBuffer = 0;
     if( !doubleBuffer )
     {

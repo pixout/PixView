@@ -26,29 +26,27 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 #include <QColor>
 #include <QDebug>
 
+static int prev_universes = -1;
+
 Painter::Painter( Output *output, AppSettings *settings )
     : output_( output ), image_( 400, 400, QImage::Format_RGB32 ), orientation_ ( Painter::Vertical ), settings_( settings )
 {
     QObject::connect( this, &Painter::OnOrientation, this, &Painter::Resize );
-
-    switch( settings->position() )
-    {
-        case AppSettings::Horizontal:
-            SetOrientation(Painter::Horizontal);
-            break;
-
-        case AppSettings::Vertical:
-            SetOrientation(Painter::Vertical);
-            break;
-    }
-
-    //todo: connect to settings and control its changing
+    RePosition();
 }
 
 void Painter::Draw( int universe, const QByteArray &data )
 {
     int width = image_.width();
     int height = image_.height();
+
+    if( prev_universes<0 || universe+1 > prev_universes )
+    {
+        prev_universes = universe+1;
+        settings_->setProperty("universes", prev_universes );
+
+        //todo: need to setup timer to not only increment universes but decriment too
+    }
 
     LOG(4, "width=%d height=%d data.size=%d", width, height, data.size());
 
@@ -115,10 +113,32 @@ void Painter::Resize( int width, int height )
     image_ = orientation_ == Painter::Horizontal
 	? QImage( width, height, QImage::Format_RGB32)
 	: QImage( height, width, QImage::Format_RGB32);
+
+    clear();
 }
 
 void Painter::SetOrientation( enum Orientation orientation )
 {
+    clear();
     orientation_ = orientation;
     emit OnOrientation( image_.width(), image_.height() );
+}
+
+void Painter::RePosition()
+{
+    switch( settings_->position() )
+    {
+        case AppSettings::Horizontal:
+            SetOrientation(Painter::Horizontal);
+            break;
+
+        case AppSettings::Vertical:
+            SetOrientation(Painter::Vertical);
+            break;
+    }
+}
+
+void Painter::clear()
+{
+    image_.fill( 0 );
 }

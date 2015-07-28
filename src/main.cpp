@@ -31,6 +31,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 #include <QStandardPaths>
 #include <QDir>
 
+//viletaet esli rjadom s pxm net fixture file
+
 void usage()
 {
     qDebug() << "\nUsage: ./pixview <port> <pixel-mapping file> [ < horizontol | vertical > ]";
@@ -92,10 +94,13 @@ int main( int argc, char* argv[] )
 
     QObject::connect( &receiver, &Receiver::Received, &painter, &Painter::Draw );
     QObject::connect( &painter, &Painter::ReadyToOutput, output, &PainterOutput::Process );
+
     QObject::connect( &mapper, &PixelMapper::OnResize, &painter, &Painter::Resize );
     QObject::connect( &mapper, &PixelMapper::OnResize, output, &PainterOutput::setCellSize );
+
     QObject::connect( &settings, &AppSettings::fixturePathChanged, &mapper, &PixelMapper::Reload );
     QObject::connect( &settings, &AppSettings::portChanged, &receiver, &Receiver::Reconnect );
+    QObject::connect( &settings, &AppSettings::positionChanged, &painter, &Painter::RePosition );
 
     if( !settings.fixturePath().isEmpty() )
         mapper.Reload();

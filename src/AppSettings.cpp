@@ -7,7 +7,7 @@
 #include <QtQml>
 
 AppSettings::AppSettings(QObject *parent) : QObject(parent),
-    port_(6454),position_( Vertical ),app_path_( QString("%1").arg(QCoreApplication::applicationDirPath()) )
+    port_(6454),position_( Vertical ),app_path_( QString("%1").arg(QCoreApplication::applicationDirPath()) ), universes_(0)
 {
 
 }
@@ -15,11 +15,6 @@ AppSettings::AppSettings(QObject *parent) : QObject(parent),
 AppSettings::~AppSettings()
 {
 }
-
-//void AppSettings::declareQML()
-//{
-//        qmlRegisterType<Position>("PositionEnums", 1, 0, "Style");
-//}
 
 bool AppSettings::load( const QString &path )
 {
