@@ -6,9 +6,11 @@ It could be usefull when you need to see how your lighting effects looks without
 ![Pixout ArtNet Viewer demo](http://pixoutserver.com/data/img/rocket.png)
 
 This viewer emulate lighting device and displays ArtNet flow without universe limitation for specified Fixture on the PC screen.
-At the moment viewer supports only MADRIX fixtures (.mpx) after it will be converted to (.pxm) format
+At the moment viewer supports only Pixout pixel mapping + fixtures (.pxm)
 
 *This project could be build on Linux and Windows but we doesn't try to build it on Apple*
+
+Also you can prioritize <a href="http://www.gitfund.org/pixout/PixView">here</a> or <a href="https://www.bountysource.com/teams/pixout">here</a> issues for help us.
 
 ## Build instructions
 
