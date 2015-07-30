@@ -50,9 +50,6 @@ void Receiver::ProcessData(const QByteArray &datagram)
     }
 
     int ver = 0x5000;
-    int a = 0;
-    memcpy( &a, datagram.data()+8, 2 );
-    (void)a;
     if( memcmp( &ver, datagram.data()+8, 2 ) )
     {
         WARN( "No DMX data, skip" );
