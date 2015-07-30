@@ -27,7 +27,7 @@ import QtQuick.Dialogs 1.2
                 ColumnLayout{
 
                 Text {
-                    text: "Software Version: 0.0.1"
+                    text: "Software Version: 0.0.2"
                 }
 
                 Text {

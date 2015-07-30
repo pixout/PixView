@@ -31,7 +31,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 #include <QStandardPaths>
 #include <QDir>
 
-//viletaet esli rjadom s pxm net fixture file
+//todo: Exception in Fixtures in case if fixture not presents
+//todo: Error handling
 
 void usage()
 {

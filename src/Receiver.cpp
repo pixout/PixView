@@ -45,9 +45,20 @@ void Receiver::ProcessData(const QByteArray &datagram)
     static int prev_sequence = -1;
     if( memcmp( "Art-Net", datagram.data(), 7 ) )
     {
-        qWarning() << "Skipped broken datagram";
+        WARN( "Not Art-Net package" );
         return;
     }
+
+    int ver = 0x5000;
+    int a = 0;
+    memcpy( &a, datagram.data()+8, 2 );
+    (void)a;
+    if( memcmp( &ver, datagram.data()+8, 2 ) )
+    {
+        WARN( "No DMX data, skip" );
+        return;
+    }
+
     unsigned size = ((unsigned char)datagram[16] << 8) + (unsigned char)datagram[17];
     unsigned universe = (unsigned char)datagram[14] + ((unsigned char)datagram[15] << 8);
     int sequence = (unsigned char)datagram[12];

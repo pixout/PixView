@@ -52,7 +52,7 @@ void PixelMapper::Reload()
     {
         //todo: exception
         ERR( "File '%s' not found", qPrintable( settings_->fixturePath() ) );
-	throw;
+        throw;
     }
     
     QJsonParseError parse_error;
@@ -62,7 +62,7 @@ void PixelMapper::Reload()
     {
         //todo: exception
         ERR( "Parse error '%s' at offest %d", qPrintable( parse_error.errorString() ), parse_error.offset );
-	throw;
+        throw;
     }
 
     file.close();

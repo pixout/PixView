@@ -25,11 +25,53 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 #include <QColor>
 #include <QDebug>
+#include <QDateTime>
+#include <QTimer>
 
-static int prev_universes = -1;
+struct Painter::Impl: public QObject
+{
+    Impl( AppSettings *settings ) : settings_( settings )
+    {
+        timer_.setInterval( 1000 );
+        connect( &timer_, &QTimer::timeout, this, &Impl::update );
+    }
+
+    int calc_universe_in_use() const
+    {
+        const qint64 cur = QDateTime::currentMSecsSinceEpoch();
+        int count = 0;
+        foreach (const qint64 value, stats_)
+        {
+            if( (cur - value) <= 1000 )
+                ++count;
+        }
+
+        return count;
+    }
+
+    void update()
+    {
+        settings_->setProperty("universes", calc_universe_in_use() );
+    }
+
+    void proceed_universe_stat( int universe )
+    {
+        stats_.insert( universe, QDateTime::currentMSecsSinceEpoch() );
+
+        if( !timer_.isActive() )
+            timer_.start();
+    }
+
+
+    QHash<int, qint64> stats_;
+    QTimer timer_;
+    AppSettings *settings_;
+
+};
 
 Painter::Painter( Output *output, AppSettings *settings )
-    : output_( output ), image_( 400, 400, QImage::Format_RGB32 ), orientation_ ( Painter::Vertical ), settings_( settings )
+    : output_( output ), image_( 400, 400, QImage::Format_RGB32 ), orientation_ ( Painter::Vertical ), settings_( settings ),
+      impl_( new Painter::Impl( settings ) )
 {
     QObject::connect( this, &Painter::OnOrientation, this, &Painter::Resize );
     RePosition();
@@ -40,13 +82,7 @@ void Painter::Draw( int universe, const QByteArray &data )
     int width = image_.width();
     int height = image_.height();
 
-    if( prev_universes<0 || universe+1 > prev_universes )
-    {
-        prev_universes = universe+1;
-        settings_->setProperty("universes", prev_universes );
-
-        //todo: need to setup timer to not only increment universes but decriment too
-    }
+    impl_->proceed_universe_stat( universe );
 
     LOG(4, "width=%d height=%d data.size=%d", width, height, data.size());
 
