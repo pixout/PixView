@@ -23,16 +23,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 #include <QVector>
 #include "Common/Fixture.hpp"
 
+class AppSettings;
+
 class PixelMapper : public QObject
 {
     Q_OBJECT
 signals:
     void OnResize( int width, int height );
 public slots:
-    void Load( const QString& path );
+    void Reload();
 
 public:
-    PixelMapper();
+    PixelMapper( AppSettings *settings );
 
     const Fixture::Part *FixturePart( unsigned x, unsigned y ) const { return field_.at( y ).at( x ); }
 
@@ -46,4 +48,5 @@ private:
     Fixtures fixtures_;
     Field field_;
     int width_, height_;
+    AppSettings *settings_;
 };

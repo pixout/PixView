@@ -18,13 +18,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 */
 #pragma once
 #include <QImage>
+#include <QSharedPointer>
 
 class Output;
 class PixelMapper;
+class AppSettings;
 
 class Painter : public QObject
 {
     Q_OBJECT
+
 signals:
     void ReadyToOutput( const QImage &image );
     void OnOrientation( int width, int height);
@@ -32,11 +35,12 @@ signals:
 public:
     enum Orientation
     {
-	Vertical,
-	Horizontal
+        Vertical,
+        Horizontal
     };
 
-    Painter( Output *output );
+    Painter( Output *output, AppSettings *settings );
+    inline ~Painter() {}
     void SetPixelMapper( PixelMapper *mapper) { mapper_ = mapper; }
     void SetOrientation( Orientation orientation );
     Orientation Orientation() const { return orientation_; }
@@ -44,10 +48,18 @@ public:
 public slots:
     void Draw( int universe, const QByteArray &data );
     void Resize( int width, int height);
+    void RePosition();
 
 private:
     Output *output_;
     QImage image_;
     PixelMapper *mapper_;
     enum Orientation orientation_;
+    AppSettings *settings_;
+    struct Impl;
+    QSharedPointer<Impl> impl_;
+
+    Q_DISABLE_COPY(Painter)
+
+    void clear();
 };

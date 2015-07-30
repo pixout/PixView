@@ -18,6 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 */
 #include "Painter.hpp"
 #include "Receiver.hpp"
+#include "AppSettings.hpp"
 #include "Common/PainterOutput.hpp"
 #include "Common/PixelMapper.hpp"
 #include "Common/Logger.hpp"
@@ -26,12 +27,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 #include <QQuickView>
 #include <QHostAddress>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include <QStandardPaths>
+#include <QDir>
+
+//todo: Exception in Fixtures in case if fixture not presents
+//todo: Error handling
 
 void usage()
 {
-    qDebug() << "Pixout ArtNet Viewer";
-    qDebug() << "Version" << VERSION;
-    qDebug() << "Usage: ./pixview <port> <pixel-mapping file> [ < horizontol | vertical > ]";
+    qDebug() << "\nUsage: ./pixview <port> <pixel-mapping file> [ < horizontol | vertical > ]";
     qDebug() << "\tport - listen on port (default 6454)";
     qDebug() << "\tpixel-mapping file ( use mapping from file )";
     qDebug() << "\thorizontol or vertical orientation of universes (default is vertical)";
@@ -40,54 +45,77 @@ void usage()
 
 int main( int argc, char* argv[] )
 {
-    if( argc < 3 ) {
-	usage();
-	return EXIT_FAILURE;
-    }
-
+    QApplication app(argc, argv);
     LOGGER.setLevel( 3 );
     LOGGER.setOutput( Logger::Console );
+    LOG( 1, "Pixout ArtNet Viewer" );
     LOG( 1, "viewer Version: %s ", VERSION );
 
-    int port = atoi( argv[1] );
-    const char* pm_file = argv[2];
+    const QString settings_path = QDir::fromNativeSeparators(
+                QStandardPaths::writableLocation( QStandardPaths::AppLocalDataLocation ) + QDir::separator()
+                );
 
-    QApplication app(argc, argv);
+    // create settings location if not exists
+    QDir ().mkdir( settings_path );
+    AppSettings settings;
+
+    if( argc < 3 )
+    {
+        if( !settings.load( settings_path + "app.data") )
+        {
+           WARN("Can't open or empty fixture file: %s", qPrintable(settings_path + "app.data") );
+        }
+    }
+    else {
+        settings.setProperty("port", atoi( argv[1] ));
+        settings.setProperty("fixturePath", argv[2]);
+        settings.setProperty("position", argv[3]);
+    }
+
     QQmlApplicationEngine engine;
+    app.setWindowIcon(QIcon(":favicon.png"));
+    engine.addImportPath( QStringLiteral("qrc:/"));
 
     qmlRegisterType<PainterOutput>("Painter", 1, 0, "PainterItem");
+    qmlRegisterUncreatableType<AppSettings,1>("AppSettings",1,0,"AppSettings","AppSettings couldn't be created from QML");
+
+    engine.rootContext()->setContextProperty("settings", &settings);
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     QObject *rootObject = engine.rootObjects().first();
     Q_ASSERT( rootObject );
 
     PainterOutput *output( rootObject->findChild<PainterOutput*>( "painter" ) );
-    Painter painter( output );
-    PixelMapper mapper;
+    Q_ASSERT( output );
+
+    Painter painter( output, &settings );
+    PixelMapper mapper( &settings );
     painter.SetPixelMapper( &mapper );
-    Receiver receiver( port );
+    Receiver receiver( &settings );
 
     QObject::connect( &receiver, &Receiver::Received, &painter, &Painter::Draw );
     QObject::connect( &painter, &Painter::ReadyToOutput, output, &PainterOutput::Process );
+
     QObject::connect( &mapper, &PixelMapper::OnResize, &painter, &Painter::Resize );
     QObject::connect( &mapper, &PixelMapper::OnResize, output, &PainterOutput::setCellSize );
 
-    if ( argc > 3 )
-    {
-        if ( !strcmp(argv[3], "horizontal") )
-        {
-            painter.SetOrientation(Painter::Horizontal);
-        }
-        else if ( !strcmp(argv[3], "vertical") )
-        {
-            painter.SetOrientation(Painter::Vertical);
-        }
-    }
-	
-    mapper.Load( pm_file );
+    QObject::connect( &settings, &AppSettings::fixturePathChanged, &mapper, &PixelMapper::Reload );
+    QObject::connect( &settings, &AppSettings::portChanged, &receiver, &Receiver::Reconnect );
+    QObject::connect( &settings, &AppSettings::positionChanged, &painter, &Painter::RePosition );
 
-    qDebug("Listening on port %u with pixel-mapping file %s and orientation %s",
-	   port, pm_file, painter.Orientation() == Painter::Vertical ? "vertical" : "horizontal" );
+    if( !settings.fixturePath().isEmpty() )
+        mapper.Reload();
+    else
+        WARN("Pixel mapping empty, skip" );
 
-    return app.exec();
+    LOG(1, "Listening on port %u with pixel-mapping file %s and orientation %s",
+       settings.port(), qPrintable(settings.fixturePath()), painter.Orientation() == Painter::Vertical ? "vertical" : "horizontal" );
+
+    QQuickWindow *window = qobject_cast<QQuickWindow *>(rootObject);
+    Q_ASSERT( window );
+    window->show();
+
+    const int res = app.exec();
+    settings.Save( settings_path + "app.data" );
+    return res;
 }

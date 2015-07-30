@@ -17,13 +17,14 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA 
 */
 #include "Receiver.hpp"
+#include "AppSettings.hpp"
 #include "Common/Fixture.hpp"
 #include "Common/Logger.hpp"
 
-Receiver::Receiver( int port )
+Receiver::Receiver( AppSettings *settings ) : settings_(settings)
 {
-    socket_.bind( QHostAddress::Any, port );
     QObject::connect( &socket_, &QUdpSocket::readyRead, this, &Receiver::ReadData );
+    Reconnect();
 }
 
 void Receiver::ReadData()
@@ -44,9 +45,20 @@ void Receiver::ProcessData(const QByteArray &datagram)
     static int prev_sequence = -1;
     if( memcmp( "Art-Net", datagram.data(), 7 ) )
     {
-        qWarning() << "Skipped broken datagram";
+        WARN( "Not Art-Net package" );
         return;
     }
+
+    int ver = 0x5000;
+    int a = 0;
+    memcpy( &a, datagram.data()+8, 2 );
+    (void)a;
+    if( memcmp( &ver, datagram.data()+8, 2 ) )
+    {
+        WARN( "No DMX data, skip" );
+        return;
+    }
+
     unsigned size = ((unsigned char)datagram[16] << 8) + (unsigned char)datagram[17];
     unsigned universe = (unsigned char)datagram[14] + ((unsigned char)datagram[15] << 8);
     int sequence = (unsigned char)datagram[12];
@@ -64,3 +76,9 @@ void Receiver::ProcessData(const QByteArray &datagram)
     emit Received( universe, data );
 }
 
+void Receiver::Reconnect()
+{
+    LOG( 1, "Connecting to port %d", settings_->port() );
+    socket_.close();
+    socket_.bind( QHostAddress::Any, settings_->port() );
+}
