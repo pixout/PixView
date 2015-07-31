@@ -3,7 +3,7 @@ This viewer used in [Pixout ArtNet Recorder](http://www.pixoutserver.com) projec
 for our internal testing and we think this project could be interesting for others too.
 It could be usefull when you need to see how your lighting effects looks without LED screen ( on regular PC ) or preview lighting show on dedicated PC at the show time.
 
-![Pixout ArtNet Viewer demo](http://pixoutserver.com/data/img/rocket.png)
+![Pixout ArtNet Viewer demo](http://pixout.github.io/PixView/img/mix.png)
 
 This viewer emulate lighting device and displays ArtNet flow without universe limitation for specified Fixture on the PC screen.
 At the moment viewer supports only Pixout pixel mapping + fixtures (.pxm)
@@ -32,6 +32,7 @@ Start PixView with demo fixture ( 102 x 102 RGB pixels ) 60 ArtNet universes
 ```
 pixview 6454 pxm/demo.pxm horizontal
 ```
+Without arguments PixView shows main screen with default parameters.
 
 *Viewer listens ArtNet unicast/broadcast packets on specified UDP port.
 Without ArtNet flow viewer will display black screen, you need to provide ArtNet flow to see something*
