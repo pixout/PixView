@@ -5,6 +5,7 @@ SET( SOURCES
   PixelMapper.cpp
   Util.cpp
   PainterOutput.cpp
+  Parser.cpp
 )
 
 # Plugin headers used Qt
@@ -12,6 +13,7 @@ SET( MOC_HEADERS
   PixelMapper.hpp
   Logger.hpp
   PainterOutput.hpp
+  Parser.hpp
 )
 
 QT5_WRAP_CPP( SOURCES ${MOC_HEADERS})

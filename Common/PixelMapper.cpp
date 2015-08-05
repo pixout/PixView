@@ -19,6 +19,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 #include "AppSettings.hpp"
 #include "Common/PixelMapper.hpp"
 #include "Common/Logger.hpp"
+#include "Common/Parser.hpp"
 
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -43,6 +44,16 @@ bool PixelMapper::reload_mapping()
     }
 
     LOG( 2, "Loading pixel mapping from file '%s'", qPrintable( settings_->fixturePath() ) );
+
+//todo: insert pixel mapping conversion
+
+#if 0
+    Parser parser;
+    parser.Init( settings_->fixturePath(), settings_->fixturePath()+".pxm" );
+    parser.convert();
+#endif
+
+// -------------------
 
     QJsonDocument json;
     QFile file( settings_->fixturePath() );

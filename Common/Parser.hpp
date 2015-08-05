@@ -8,11 +8,12 @@ class Parser : public QObject
 
 public:
 
-    Parser( QObject *o ) :
+    Parser( QObject *o = 0 ) :
         QObject( o )
     {}
 
     bool Init( const QString &in_path, const QString &out_path  );
+    void convert() { start(); }
 
 signals:
     void success();
