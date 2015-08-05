@@ -42,6 +42,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 #include <QObject>
 #include <QDebug>
+#include <QString>
 
 class Logger : public QObject
 {
@@ -55,6 +56,7 @@ public:
     static Logger& instance() { static Logger instance; return instance; }
     static void MessageHandler( QtMsgType type, const QMessageLogContext &context, const QString &message );
     void log( int level, const char *file, int line, const char *function, const char *format, ... );
+    const QString &error_string() const { return error_string_; };
 
 public slots:
     void setOutput( Output output ) { output_ = output; }
@@ -72,6 +74,7 @@ private:
     Output output_;
     int level_;
     bool use_context_;
+    QString error_string_;
 };
 
 #define LOGGER (Logger::instance())

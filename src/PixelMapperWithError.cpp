@@ -16,38 +16,23 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA 
 */
-#pragma once
+#include "PixelMapperWithError.hpp"
+#include "Common/Logger.hpp"
+#include <QMessageBox>
 
-#include <QString>
-#include <QVector>
-
-class Fixture
+PixelMapperWithError::PixelMapperWithError( AppSettings *settings )
+    : PixelMapper(settings)
 {
-public:
-    struct Part
+}
+
+void PixelMapperWithError::Reload()
+{
+    if( !reload_mapping() )
     {
-	enum Property
-	{
-	    Undefined,
-	    Intensity,
-	    Red,
-	    Green,
-	    Blue
-	};
-	typedef QVector< Property > Properties;
-
-	int universe;
-	int channel;
-	Properties properties;
-    };
-
-    Fixture();
-
-    typedef QVector< QVector< Part > > Parts;
-    bool Load( const QString &path );
-    Parts &GetParts() { return parts_; }
-private:
-    QString name_;
-    Parts parts_;
-};
-
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Error");
+        msgBox.setIcon( QMessageBox::Critical );
+        msgBox.setText( LOGGER.error_string() );
+        msgBox.exec();
+    }
+}

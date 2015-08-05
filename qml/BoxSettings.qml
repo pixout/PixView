@@ -50,7 +50,7 @@ Rectangle {
             }
 
             Text {
-                text: "Fixture Path";
+                text: "Pixel Mapping";
                 color: "white";
                 Layout.alignment: Qt.AlignCenter;
             }

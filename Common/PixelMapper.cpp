@@ -26,13 +26,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 #include <QFile>
 #include <QDir>
 #include <QUrl>
+#include <QMessageBox>
 
 PixelMapper::PixelMapper( AppSettings *settings )
     : width_( 0 ), height_ ( 0 ), settings_(settings)
 {
 }
 
-void PixelMapper::Reload()
+bool PixelMapper::reload_mapping()
 {
     QUrl url(settings_->fixturePath());
     if( url.isLocalFile() )
@@ -52,7 +53,7 @@ void PixelMapper::Reload()
     {
         //todo: exception
         ERR( "File '%s' not found", qPrintable( settings_->fixturePath() ) );
-        throw;
+        return false;
     }
     
     QJsonParseError parse_error;
@@ -62,7 +63,7 @@ void PixelMapper::Reload()
     {
         //todo: exception
         ERR( "Parse error '%s' at offest %d", qPrintable( parse_error.errorString() ), parse_error.offset );
-        throw;
+        return false;
     }
 
     file.close();
@@ -80,13 +81,15 @@ void PixelMapper::Reload()
 
     if( !pixel_map.value( "height" ).isDouble() )
     {
-	ERR( "'height' absent" ); throw;
+        ERR( "'height' absent" );
+        return false;
     }
     height = pixel_map.value( "height" ).toDouble();
 
     if( !pixel_map.value( "width" ).isDouble() )
     {
-	ERR( "'width' absent" ); throw;
+        ERR( "'width' absent" );
+        return false;
     }
     width = pixel_map.value( "width" ).toDouble();
 
@@ -102,7 +105,8 @@ void PixelMapper::Reload()
 
     if( !pixel_map.value( "fixtures" ).isArray() )
     {
-	ERR( "'fixtures' absent" ); throw;
+        ERR( "'fixtures' absent" );
+        return false;
     }
     else
     {
@@ -128,32 +132,37 @@ void PixelMapper::Reload()
 
 		if( !fixtureObject.value( "path" ).isString() )
 		{
-                    ERR( "'path' absent" ); throw;
+                    ERR( "'path' absent" );
+                    return false;
 		}
 		path = fixtureObject.value( "path" ).toString();
 
 		if( !fixtureObject.value( "universe" ).isDouble() )
 		{
-                    ERR( "'universe' absent" ); throw;
+                    ERR( "'universe' absent" );
+                    return false;
 		}
 		universe = fixtureObject.value( "universe" ).toDouble();
 
 		if( !fixtureObject.value( "channel" ).isDouble() )
 		{
-                    ERR( "'channel' absent" ); throw;
+                    ERR( "'channel' absent" );
+                    return false;
 		}
 		channel = fixtureObject.value( "channel" ).toDouble();
 
 		if( !fixtureObject.value( "x_offset" ).isDouble() )
 		{
-                    ERR( "'x_offset' absent" ); throw;
+                    ERR( "'x_offset' absent" );
+                    return false;
 		}
 		x_offset = fixtureObject.value( "x_offset" ).toDouble();
 
 		if( !fixtureObject.value( "y_offset" ).isDouble() )
 		{
-                    ERR( "'y_offset' absent" ); throw;
-		    throw;
+                    ERR( "'y_offset' absent" );
+                    return false;
+            return false;
 		}
 		y_offset = fixtureObject.value( "y_offset" ).toDouble();
 
@@ -163,7 +172,12 @@ void PixelMapper::Reload()
             path = fi.absolutePath()+QString( QDir::separator() )+path;
         }
 
-		Fixture *fixture = new Fixture( path );
+        Fixture *fixture = new Fixture();
+
+        if( !fixture->Load( path ) )
+        {
+            return false;
+        }
 
 		int height = fixture->GetParts().size();
 		for( int y = 0; y < height; ++y )
@@ -188,7 +202,7 @@ void PixelMapper::Reload()
 			{
                             ERR( "Fixture '%s' (%d, %d) at offset (%d, %d) doesn't fit pixel mapping (%d, %d)",
                                  qPrintable( name ), width, height, x_offset, y_offset, width_, height_ );
-			    throw;
+                return false;
 			}
 
 			field_[ y_offset + y ] [ x_offset + x ] = part;
@@ -204,4 +218,5 @@ void PixelMapper::Reload()
     emit OnResize( width_, height_ );
 
     LOG( 3, "PXM: width=%d, height=%d", width_, height_ );
+    return true;
 }

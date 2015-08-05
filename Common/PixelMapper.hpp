@@ -30,8 +30,6 @@ class PixelMapper : public QObject
     Q_OBJECT
 signals:
     void OnResize( int width, int height );
-public slots:
-    void Reload();
 
 public:
     PixelMapper( AppSettings *settings );
@@ -43,6 +41,9 @@ public:
 
     int Width() const { return width_; }
     int Height() const { return height_; }
+
+protected:
+   bool reload_mapping();
 
 private:
     Fixtures fixtures_;

@@ -25,12 +25,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 #include "Common/Logger.hpp"
 
-Fixture::Fixture( const QString &path )
+Fixture::Fixture()
 {
-    Load( path );
 }
 
-void Fixture::Load( const QString &path )
+bool Fixture::Load( const QString &path )
 {
     LOG( 4, "Loading fixture from file '%s'", qPrintable( path ) );
 
@@ -42,7 +41,7 @@ void Fixture::Load( const QString &path )
     if( !file.exists() )
     {
         ERR( "File '%s' not found", qPrintable( path ) );
-        throw;
+        return false;
     }
     
     QJsonParseError parse_error;
@@ -51,7 +50,7 @@ void Fixture::Load( const QString &path )
     if( json.isEmpty() )
     {
         ERR( "Parse error '%s' at offest %d", qPrintable( parse_error.errorString() ), parse_error.offset );
-        throw;
+        return false;
     }
 
     file.close();
@@ -68,19 +67,22 @@ void Fixture::Load( const QString &path )
 
     if( !fixture.value( "height" ).isDouble() )
     {
-        ERR( "'height' absent" ); throw;
+        ERR( "'height' absent" );
+        return false;
     }
     height = fixture.value( "height" ).toDouble();
 
     if( !fixture.value( "width" ).isDouble() )
     {
-        ERR( "'width' absent" ); throw;
+        ERR( "'width' absent" );
+        return false;
     }
     width = fixture.value( "width" ).toDouble();
 
     if( !fixture.value( "part" ).isArray() ) // there are ( 'width' x 'height' ) equal 'part's
     {
-        ERR( "'part' absent" ); throw;
+        ERR( "'part' absent" );
+        return false;
     }
     else
     {
@@ -98,7 +100,7 @@ void Fixture::Load( const QString &path )
             if( !( *it ).isString() )
             {
                 ERR( "Property expected" );
-                throw;
+                return false;
             }
 	    QString property = (*it).toString();
 	    Fixture::Part::Property type = Fixture::Part::Property::Undefined;
@@ -121,8 +123,7 @@ void Fixture::Load( const QString &path )
 	    }
 	    else
 	    {
-                ERR( "Unknown property '%s'", qPrintable( property ) );
-                //throw;
+           WARN( "Unknown property '%s'", qPrintable( property ) );
 	    }
 
 	    part.properties[ offset ] = type;
@@ -139,5 +140,7 @@ void Fixture::Load( const QString &path )
 	    }
 	}
     }
+
+        return true;
 }
 

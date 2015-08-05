@@ -19,8 +19,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 #include "Painter.hpp"
 #include "Receiver.hpp"
 #include "AppSettings.hpp"
+#include "PixelMapperWithError.hpp"
 #include "Common/PainterOutput.hpp"
-#include "Common/PixelMapper.hpp"
 #include "Common/Logger.hpp"
 
 #include <QApplication>
@@ -30,9 +30,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 #include <QQmlContext>
 #include <QStandardPaths>
 #include <QDir>
-
-//todo: Exception in Fixtures in case if fixture not presents
-//todo: Error handling
 
 void usage()
 {
@@ -89,7 +86,7 @@ int main( int argc, char* argv[] )
     Q_ASSERT( output );
 
     Painter painter( output, &settings );
-    PixelMapper mapper( &settings );
+    PixelMapperWithError mapper( &settings );
     painter.SetPixelMapper( &mapper );
     Receiver receiver( &settings );
 
@@ -99,7 +96,7 @@ int main( int argc, char* argv[] )
     QObject::connect( &mapper, &PixelMapper::OnResize, &painter, &Painter::Resize );
     QObject::connect( &mapper, &PixelMapper::OnResize, output, &PainterOutput::setCellSize );
 
-    QObject::connect( &settings, &AppSettings::fixturePathChanged, &mapper, &PixelMapper::Reload );
+    QObject::connect( &settings, &AppSettings::fixturePathChanged, &mapper, &PixelMapperWithError::Reload );
     QObject::connect( &settings, &AppSettings::portChanged, &receiver, &Receiver::Reconnect );
     QObject::connect( &settings, &AppSettings::positionChanged, &painter, &Painter::RePosition );
 

@@ -18,36 +18,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 */
 #pragma once
 
-#include <QString>
-#include <QVector>
+#include <QObject>
+#include "Common/PixelMapper.hpp"
 
-class Fixture
+class PixelMapperWithError : public PixelMapper
 {
+    Q_OBJECT
+public slots:
+    void Reload();
+
 public:
-    struct Part
-    {
-	enum Property
-	{
-	    Undefined,
-	    Intensity,
-	    Red,
-	    Green,
-	    Blue
-	};
-	typedef QVector< Property > Properties;
-
-	int universe;
-	int channel;
-	Properties properties;
-    };
-
-    Fixture();
-
-    typedef QVector< QVector< Part > > Parts;
-    bool Load( const QString &path );
-    Parts &GetParts() { return parts_; }
-private:
-    QString name_;
-    Parts parts_;
+    PixelMapperWithError( AppSettings *settings );
 };
-

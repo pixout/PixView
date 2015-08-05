@@ -51,12 +51,15 @@ void Logger::MessageHandler( QtMsgType type, const QMessageLogContext &context, 
     case QtFatalMsg:
         LOGGER.log( Error, context.file, context.line, context.function, qPrintable( message ) );
         break;
-    default: throw;             // shouldn't happen
+    default: ;
     }
 }
 
 void Logger::write( int level, const char *s )
 {
+    if( level == Error )
+        error_string_ = s;
+
     switch( output_ )
     {
     case None:    writeToNone(    level, s ); break;
